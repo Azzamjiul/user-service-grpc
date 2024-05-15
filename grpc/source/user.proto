@@ -1,0 +1,17 @@
+syntax = "proto3";
+package user;
+
+option go_package = "grpc/proto";
+
+service UserService {
+  rpc GetUserById(GetUserByIdRequest) returns (User);
+}
+
+message GetUserByIdRequest {
+  uint64 user_id = 1;
+}
+
+message User {
+  uint64 id = 1;
+  string name = 2;
+}
