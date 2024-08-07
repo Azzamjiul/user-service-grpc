@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"net"
+	"os"
 	"strconv"
+	"time"
 
 	"user-service/domain/user"
 	"user-service/domain/user/repository"
@@ -17,27 +19,30 @@ import (
 )
 
 func main() {
-	// Inisialisasi database
-	dsn := "root:@tcp(127.0.0.1:3306)/user-service?charset=utf8mb4&parseTime=True&loc=Local"
+	// Load configuration
+	dsn := os.Getenv("DB_DSN")
+	if dsn == "" {
+		dsn = "root:@tcp(127.0.0.1:3306)/user-service?charset=utf8mb4&parseTime=True&loc=Local"
+	}
+
+	// Initialize database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatalf("failed to connect database: %v", err)
 	}
 
 	// Auto Migrate
 	if err := db.AutoMigrate(&user.User{}); err != nil {
-		// Tangani kesalahan saat melakukan AutoMigrate
-		panic("failed to auto migrate database: " + err.Error())
+		log.Fatalf("failed to auto migrate database: %v", err)
 	}
 
-	// Inisialisasi repository
+	// Initialize repository
 	userRepository := repository.NewUserRepository(db)
 
-	// Inisialisasi server Gin
+	// Initialize HTTP server
 	go func() {
 		r := gin.Default()
 
-		// Handler untuk membuat pengguna baru
 		r.POST("/users", func(c *gin.Context) {
 			var newUser user.User
 			if err := c.ShouldBindJSON(&newUser); err != nil {
@@ -51,7 +56,6 @@ func main() {
 			c.JSON(201, newUser)
 		})
 
-		// Handler untuk mendapatkan pengguna berdasarkan ID
 		r.GET("/users/:id", func(c *gin.Context) {
 			userID := c.Param("id")
 			userIDInt, err := strconv.Atoi(userID)
@@ -67,22 +71,17 @@ func main() {
 			c.JSON(200, user)
 		})
 
-		// Jalankan server Gin
 		if err := r.Run(":8080"); err != nil {
-			panic("failed to start Gin server: " + err.Error())
+			log.Fatalf("failed to start Gin server: %v", err)
 		}
 	}()
 
-	// Inisialisasi server gRPC
+	// Initialize gRPC server
 	go func() {
-		// Inisialisasi server gRPC
 		grpcServer := grpc.NewServer()
 
-		// Daftarkan implementasi layanan gRPC
-		// proto.RegisterUserServiceServer(grpcServer, &service.UserServiceServer{})
 		proto.RegisterUserServiceServer(grpcServer, &service.UserServiceServer{UserRepository: *userRepository})
 
-		// Mulai server gRPC
 		lis, err := net.Listen("tcp", ":50051")
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
@@ -92,6 +91,16 @@ func main() {
 		}
 	}()
 
-	// Tunggu tanpa melakukan apa pun
+	// Graceful shutdown handling
+	stop := make(chan struct{})
+	go func() {
+		<-stop
+		// Add cleanup and graceful shutdown code here
+		time.Sleep(2 * time.Second) // Simulate shutdown delay
+		log.Println("Shutting down")
+		os.Exit(0)
+	}()
+
+	// Block main thread
 	select {}
 }
