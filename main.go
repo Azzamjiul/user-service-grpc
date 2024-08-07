@@ -21,9 +21,6 @@ import (
 func main() {
 	// Load configuration
 	dsn := os.Getenv("DB_DSN")
-	if dsn == "" {
-		dsn = "root:@tcp(127.0.0.1:3306)/user-service?charset=utf8mb4&parseTime=True&loc=Local"
-	}
 
 	// Initialize database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
