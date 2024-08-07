@@ -1,0 +1,8 @@
+services:
+  user-service:
+    build: .
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      - DB_DSN=root:@tcp(host.docker.internal:3306)/user-service?charset=utf8mb4&parseTime=True&loc=Local
