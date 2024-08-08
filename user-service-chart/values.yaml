@@ -8,6 +8,16 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+labels:
+  app.kubernetes.io/name: user-service
+  app.kubernetes.io/instance: RELEASE-NAME
+  app.kubernetes.io/managed-by: Helm
+  app.kubernetes.io/version: "1.16.0"
+  app.kubernetes.io/component: user-service
+  app.kubernetes.io/part-of: user-service
+  app.kubernetes.io/created-by: Helm
+  app.kubernetes.io/chart: user-service-0.1.0
+  app.kubernetes.io/heritage: Helm
 
 serviceAccount:
   create: true
@@ -39,16 +49,6 @@ ingress:
   tls: []
 
 resources: {}
-
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
 
 autoscaling:
   enabled: false

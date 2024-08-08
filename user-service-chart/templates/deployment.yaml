@@ -33,14 +33,6 @@ spec:
         - name: {{ .name }}
           value: {{ .value | quote }}
         {{- end }}
-        livenessProbe:
-          httpGet:
-            path: {{ .Values.livenessProbe.httpGet.path }}
-            port: {{ .Values.service.httpPort }}
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.readinessProbe.httpGet.path }}
-            port: {{ .Values.service.httpPort }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

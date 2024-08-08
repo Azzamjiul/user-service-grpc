@@ -2,6 +2,7 @@
 package repository
 
 import (
+	"log"
 	"user-service/domain/user"
 
 	"gorm.io/gorm"
@@ -22,8 +23,11 @@ func (ur *UserRepository) Create(user *user.User) error {
 func (ur *UserRepository) FindByID(id uint) (*user.User, error) {
 	var u user.User
 	if err := ur.db.First(&u, id).Error; err != nil {
+		log.Println("failed to query user: " + err.Error())
 		return nil, err
 	}
+
+	log.Println("success to query user: ", u)
 	return &u, nil
 }
 
