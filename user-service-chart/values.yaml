@@ -1,6 +1,7 @@
 replicaCount: 1
 
 image:
+  name: user-service
   repository: user-service
   pullPolicy: IfNotPresent
   tag: latest

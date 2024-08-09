@@ -30,7 +30,7 @@ func main() {
 	// Load configuration
 	dsn := os.Getenv("DB_DSN")
 	// dsn = "root:@tcp(localhost:3306)/user-service?charset=utf8mb4&parseTime=True&loc=Local"
-	log.Println("dsn: " + dsn)
+	log.Info("dsn: " + dsn)
 
 	// Initialize database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -50,9 +50,14 @@ func main() {
 	go func() {
 		r := gin.Default()
 
-		r.GET("", func(c *gin.Context) {
-			log.Info("WELCOME TO USER SERVICE")
-			c.JSON(200, gin.H{"message": "Welcome to User Service"})
+		r.GET("/", func(c *gin.Context) {
+			log.WithFields(logrus.Fields{}).Info("/ TO USER-SERVICE")
+			c.JSON(200, gin.H{"message": "/"})
+		})
+
+		r.GET("/welcome", func(c *gin.Context) {
+			log.WithFields(logrus.Fields{}).Info("WELCOME TO USER-SERVICE")
+			c.JSON(200, gin.H{"message": "WELCOME"})
 		})
 
 		r.POST("/users", func(c *gin.Context) {
