@@ -6,17 +6,8 @@ image:
   pullPolicy: IfNotPresent
   tag: latest
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-# labels:
-#   app: user-service
-
 serviceAccount:
-  create: true
-  automount: true
-  annotations: {}
-  name: ""
+  create: false
 
 podAnnotations: {}
 podLabels: {}
@@ -32,22 +23,11 @@ service:
 
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
 
 resources: {}
 
 autoscaling:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
 
 volumes: []
 
