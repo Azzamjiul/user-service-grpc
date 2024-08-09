@@ -50,6 +50,11 @@ func main() {
 	go func() {
 		r := gin.Default()
 
+		r.GET("", func(c *gin.Context) {
+			log.Info("WELCOME TO USER SERVICE")
+			c.JSON(200, gin.H{"message": "Welcome to User Service"})
+		})
+
 		r.POST("/users", func(c *gin.Context) {
 			var newUser user.User
 			if err := c.ShouldBindJSON(&newUser); err != nil {

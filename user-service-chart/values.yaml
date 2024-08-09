@@ -8,8 +8,8 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-labels:
-  app: user-service
+# labels:
+#   app: user-service
 
 serviceAccount:
   create: true
