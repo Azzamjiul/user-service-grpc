@@ -21,6 +21,7 @@ import (
 func main() {
 	// Load configuration
 	dsn := os.Getenv("DB_DSN")
+	log.Println("dsn: " + dsn)
 
 	// Initialize database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -46,25 +47,35 @@ func main() {
 				c.JSON(400, gin.H{"error": err.Error()})
 				return
 			}
+
+			log.Println("newUser: ", newUser)
+
 			if err := userRepository.Create(&newUser); err != nil {
 				c.JSON(500, gin.H{"error": "failed to create user"})
 				return
 			}
+
+			log.Println("Success: ", newUser)
 			c.JSON(201, newUser)
 		})
 
 		r.GET("/users/:id", func(c *gin.Context) {
 			userID := c.Param("id")
+			log.Println("userID: ", userID)
+
 			userIDInt, err := strconv.Atoi(userID)
 			if err != nil {
 				c.JSON(400, gin.H{"error": "id must be integer"})
 				return
 			}
+
 			user, err := userRepository.FindByID(uint(userIDInt))
 			if err != nil {
 				c.JSON(404, gin.H{"error": "user not found"})
 				return
 			}
+			log.Println("user: ", user)
+
 			c.JSON(200, user)
 		})
 
